@@ -1,4 +1,7 @@
 from evdev import InputDevice, categorize, ecodes
+from gpiozero import LED, PWMLED
+IN3 = PWMLED(3)
+IN4 = PWMLED(2)
 
 def Wireless_control():
 	dev = InputDevice('/dev/input/event14')
@@ -40,4 +43,28 @@ def Wireless_control():
 		return v
 
 while True:
-	print(Wireless_control())
+	v = Wireless_control()
+	if v:
+		print(v)
+		typ = v[1]
+		v = v[0]
+
+	if type(v) is int:  #if input is trigger
+		if typ == 'R':
+			IN3.value = 1
+			GPIO = IN4
+			
+		elif typ == 'L':
+			IN4.value = 1
+			GPIO = IN3
+			
+		if v != None and v > 70:
+			if v > 200:
+				GPIO.value = 0
+				print('sds')
+			
+			else:
+				GPIO.value = 1 - (v / 255)
+			
+		if v != None and v < 70:
+			GPIO.value = 1
