@@ -20,12 +20,24 @@ def Wireless_control():
 		318: 'R3'
 	}
 
+	LT = ecodes.ABS_Z
+	RT = ecodes.ABS_RZ
+	v = None
 	for event in dev.read_loop():
-		if event.type == ecodes.EV_KEY and event.value == 1: # 1 = key press		
-			if event.code in button_map:
+		if event.type == ecodes.EV_KEY and event.value == 1: #If control is regular button press e.g X O △ ◻	
+			if event.code in button_map:			
+				v = button_map[event.code]
 				
-				return button_map[event.code]
+		elif event.type == ecodes.EV_ABS: #If control sent is a trigger button e.g L2 R2
+			if event.code == RT:	
+				v = event.value, 'R'
 				
+			elif event.code == LT:
+				v = event.value, 'L'
+		break
+		
+	if v:
+		return v
+
 while True:
 	print(Wireless_control())
-
