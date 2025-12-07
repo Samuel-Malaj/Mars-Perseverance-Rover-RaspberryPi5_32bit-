@@ -1,10 +1,14 @@
 from evdev import InputDevice, categorize, ecodes
 from gpiozero import LED, PWMLED
 import sys
-IN1 = PWMLED(4)
-IN2 = PWMLED(17)
+IN1 = PWMLED(17)
+IN2 = PWMLED(4)
 IN3 = PWMLED(3)
 IN4 = PWMLED(2)
+GPIO = None
+Rturn = False
+Lturn = False 
+
 
 dev = InputDevice('/dev/input/event14')
 
@@ -31,12 +35,10 @@ RJ = ecodes.ABS_RX
 	
 def Wireless_control():	
 	v = None
-	GPIO = None
 	for event in dev.read_loop():
 		if event.type == ecodes.EV_KEY and event.value == 1: #If control is regular button press e.g X O △ ◻	
 			if event.code in button_map:			
-				v = button_map[event.code]
-				print(v, 'Button')
+				v = button_map[event.code], 'Button'
 				
 		elif event.type == ecodes.EV_ABS: #If control sent is a trigger button e.g L2 R2
 			if event.code == RT:					
@@ -55,38 +57,78 @@ def Wireless_control():
 
 while True:
 	v = Wireless_control()
-	GPIO = None
 	print(v)
 	if v:
 		typ = v[1]
 		v = v[0]
 	########################### TRIGGER INPUT ################## 
 	if type(v) is int or type(v) is float:  
-		current_speed = v
-
 		if typ == 'R':      ## right trigger
 			IN3.value = 1
-			GPIO = IN4
+			GPIO = IN4, IN2
+			current_speed = v
 			
 		elif typ == 'L':    ## left trigger
 			IN4.value = 1
-			GPIO = IN3
+			GPIO = IN3, IN1
+			current_speed = v
 			
 		elif typ == 'J':    ## joystick
-			print(current_speed)		
-		
-		if GPIO:
-			if v > 200:
-				GPIO.value = 0
-			
-			elif v < 200 and v > 70:
-				GPIO.value = 1 - (v / 255)
+			if v > 90:
+				Rturn = True
 				
-			elif v < 70:
-				GPIO.value = 1
-			
-
-			
+			elif v < -90:
+				Lturn = True
+				
+			else:
+				Rturn = False			
+				Lturn = False
+				
+		if GPIO:
+			if Rturn:
+				print('if' * 8)
+				if current_speed > 200:
+					GPIO[0].value = 0
+					GPIO[1].value = 1
+					
+				elif v < 200 and v > 70:
+					GPIO[0].value = 1 - (current_speed / 255)
+					GPIO[1].value = 1
+						
+				elif current_speed < 70:
+					GPIO[0].value = 1
+					GPIO[1].value = 1
+					GPIO = None
+					
+			elif Lturn:
+				print('elif' * 8)
+				if current_speed > 200:
+					GPIO[0].value = 1
+					GPIO[1].value = 0
+					
+				elif current_speed < 200 and v > 70:
+					GPIO[0].value = 1 - (current_speed / 255)
+					GPIO[1].value = 1
+						
+				elif current_speed < 70:
+					GPIO[0].value = 1
+					GPIO[1].value = 1
+					GPIO = None
+					
+			else:
+				if current_speed > 200:	
+					GPIO[0].value = 0
+					GPIO[1].value = 0
+					
+				elif current_speed < 200 and v > 70:
+					GPIO[0].value = 1 - (current_speed / 255)
+					GPIO[1].value = 1 - (current_speed / 255)
+						
+				elif current_speed < 70:
+					GPIO[0].value = 1
+					GPIO[1].value = 1
+					GPIO = None
+					
 	if v == 'X':
 		sys.exit()
 		
