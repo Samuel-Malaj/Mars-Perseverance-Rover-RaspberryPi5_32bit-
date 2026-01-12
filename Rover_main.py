@@ -1,6 +1,9 @@
 from evdev import InputDevice, categorize, ecodes
 from gpiozero import LED, PWMLED
 import sys
+from images import photo
+from picamera2 import Picamera2, encoders
+
 IN1 = PWMLED(17)
 IN2 = PWMLED(4)
 IN3 = PWMLED(3)
@@ -65,17 +68,20 @@ while True:
 	if type(v) is int or type(v) is float:  
 		if typ == 'R':      ## right trigger
 			IN3.value = 1
+			IN1.value = 1
 			GPIO = IN4, IN2
 			current_speed = v
 			
 		elif typ == 'L':    ## left trigger
 			IN4.value = 1
+			IN2.value = 1
 			GPIO = IN3, IN1
 			current_speed = v
 			
 		elif typ == 'J':    ## joystick
 			if v > 90:
 				Rturn = True
+				print('RRRRRRRRRRRRRRRRRRRR')
 				
 			elif v < -90:
 				Lturn = True
@@ -128,7 +134,11 @@ while True:
 					GPIO[0].value = 1
 					GPIO[1].value = 1
 					GPIO = None
-					
+				
+	if v == 'R1':
+		photo()
+
+			
 	if v == 'X':
 		sys.exit()
 		
