@@ -1,8 +1,15 @@
 from evdev import InputDevice, categorize, ecodes
-from gpiozero import LED, PWMLED
+from gpiozero import LED, PWMLED, Servo
 import sys
 from images import photo
 from picamera2 import Picamera2, encoders
+import time
+
+servo = Servo(27, min_pulse_width=0.0005, max_pulse_width=0.0025)
+rotation = 0 #rotation of servo
+
+email_adress = ''
+app_password = ''
 
 IN1 = PWMLED(17)
 IN2 = PWMLED(4)
@@ -12,8 +19,8 @@ GPIO = None
 Rturn = False
 Lturn = False 
 
-
-dev = InputDevice('/dev/input/event14')
+dev = InputDevice('/dev/input/event5') 
+#dev = InputDevice('/dev/input/by-id/Wireless Controller')
 
 # Map button codes to letters
 button_map = {
@@ -35,6 +42,7 @@ button_map = {
 LT = ecodes.ABS_Z
 RT = ecodes.ABS_RZ
 RJ = ecodes.ABS_RX
+DPAD_X = ecodes.ABS_HAT0X
 	
 def Wireless_control():	
 	v = None
@@ -52,6 +60,12 @@ def Wireless_control():
 				
 			elif event.code == RJ:
 				v = event.value - 127.5, 'J'
+				
+		if event.type == ecodes.EV_ABS and event.code == DPAD_X:
+			if event.value == -1:
+				v = 'DL', 'DPAD'
+			elif event.value == 1:
+				v = 'DR', 'DPAD'
 		break
 		
 	if v:
@@ -61,6 +75,7 @@ def Wireless_control():
 while True:
 	v = Wireless_control()
 	print(v)
+
 	if v:
 		typ = v[1]
 		v = v[0]
@@ -81,10 +96,11 @@ while True:
 		elif typ == 'J':    ## joystick
 			if v > 90:
 				Rturn = True
-				print('RRRRRRRRRRRRRRRRRRRR')
+				print('RIGHT TURN')
 				
 			elif v < -90:
 				Lturn = True
+				print('LEFT TURN')
 				
 			else:
 				Rturn = False			
@@ -122,7 +138,7 @@ while True:
 					GPIO = None
 					
 			else:
-				if current_speed > 200:	
+				if current_speed > 200:
 					GPIO[0].value = 0
 					GPIO[1].value = 0
 					
@@ -134,9 +150,19 @@ while True:
 					GPIO[0].value = 1
 					GPIO[1].value = 1
 					GPIO = None
-				
+			
+	if v == 'DL':
+		rotation -= 30
+		if rotation >= -90 and rotation <=90:
+			servo.value = rotation/90
+	
+	if v == 'DR':
+		rotation += 30
+		if rotation >= -90 and rotation <= 90:
+			servo.value = rotation/90
+
 	if v == 'R1':
-		photo()
+		photo(app_password, email_address)
 
 			
 	if v == 'X':
