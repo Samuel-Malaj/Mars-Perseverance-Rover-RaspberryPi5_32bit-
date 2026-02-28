@@ -4,6 +4,15 @@ import sys
 from images import photo
 from picamera2 import Picamera2, encoders
 import time
+import threading
+from broadcast import start_broadcast
+import time
+
+# Start the broadcast in a separate thread
+broadcast_thread = threading.Thread(target=start_broadcast, daemon=True)
+broadcast_thread.start()
+
+# Main Program
 
 servo = Servo(27, min_pulse_width=0.0005, max_pulse_width=0.0025)
 rotation = 0 #rotation of servo
@@ -19,7 +28,11 @@ GPIO = None
 Rturn = False
 Lturn = False 
 
-dev = InputDevice('/dev/input/event5') 
+try:
+	dev = InputDevice('/dev/input/event5') 
+	
+except:
+	print('No device found. try changing the event number/device location when defining dev')
 #dev = InputDevice('/dev/input/by-id/Wireless Controller')
 
 # Map button codes to letters
@@ -168,6 +181,7 @@ while True:
 	if v == 'X':
 		sys.exit()
 		
+	
 	
 
 			
