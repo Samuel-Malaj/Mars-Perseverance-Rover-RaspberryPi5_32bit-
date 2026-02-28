@@ -8,7 +8,7 @@ import time
 from PIL import Image, ImageChops, ImageStat
 import os
 
-def photo(app_password):
+def photo(app_password, email_address):
 	picam2 = Picamera2()
 	still = picam2.create_still_configuration()#(main={"size": (20, 20)})
 	picam2.configure(still)	
@@ -19,8 +19,8 @@ def photo(app_password):
 	picam2.close()
 
 	msg = EmailMessage()
-	msg['From'] = formataddr(('Samuel Malaj', 'malajsamuel287@gmail.com'))
-	msg['To'] = 'malajsamuel287@gmail.com'
+	msg['From'] = formataddr(('Rover', email_address))
+	msg['To'] = email_address
 	msg['Subject'] = 'ROVER IMAGE'
 	
 	with open('rover.jpg', 'rb') as f1:
@@ -28,7 +28,7 @@ def photo(app_password):
 		msg.add_attachment(f1_data, maintype='image', subtype='JPEG', filename='rover.jpg')
 	
 	with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-		smtp.login('malajsamuel287@gmail.com', app_password)
+		smtp.login(email_address, app_password)
 		smtp.send_message(msg)
 
 photo()
