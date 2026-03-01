@@ -3,7 +3,7 @@
 ## Electronics
 | Part | Qty | Notes |
 |------|-----|-------|
-| [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) | 1 | Main controller board |
+| [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) | 1 | Main controller board, With RaspberryPi OS debian bookworm 32bit|
 | [L298N Mini Motor Driver](https://www.amazon.co.uk/s?k=L298N+motor+driver) | 1 | Dual H-Bridge for DC motors |
 | [N20 3V 500RPM DC Motor](https://www.amazon.co.uk/s?k=N20+3V+500RPM+motor) | 2 | Geared DC motors for movement |
 | [SG90 Micro Servo](https://www.amazon.co.uk/s?k=SG90+micro+servo) | 1 | Standard micro servo for small actuation |
