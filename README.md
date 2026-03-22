@@ -1,4 +1,4 @@
-# 🔴 Perseverance Rover Replica
+# Mars Perseverance Rover Raspberry Pi Replica
 ### 3D Printed | Bluetooth Controlled | Live Camera Feed
 
 A fully functional 3D printed replica of NASA's Mars Perseverance Rover, controlled wirelessly via a PlayStation 4 controller over Bluetooth and powered by a Raspberry Pi 5. The rover streams a live camera feed over Wi-Fi and features a servo-driven rotating camera mast — just like the real thing.
@@ -77,7 +77,7 @@ pip3 install evdev Pillow
 The Raspberry Pi creates its own Wi-Fi hotspot on boot. Connect to it and navigate to:
 
 ```
-http://192.168.4.1:8000/stream
+http://<Raspberry Pi IP>:8000/stream
 ```
 
 The live MJPEG stream will load automatically.
