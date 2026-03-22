@@ -6,7 +6,9 @@ from picamera2 import Picamera2, encoders
 import time
 import threading
 from broadcast import start_broadcast
-import time
+from Hotspot import Create_Hotspot
+
+Create_Hotspot()
 
 # Start the broadcast in a separate thread
 broadcast_thread = threading.Thread(target=start_broadcast, daemon=True)
@@ -28,11 +30,14 @@ GPIO = None
 Rturn = False
 Lturn = False 
 
-try:
-	dev = InputDevice('/dev/input/event5') 
+while True:
+	try:
+		dev = InputDevice('/dev/input/event5') 
+		break
 	
-except:
-	print('No device found. try changing the event number/device location when defining dev')
+	except:
+		print('No device found. try changing the event number/device location when defining dev')
+		
 #dev = InputDevice('/dev/input/by-id/Wireless Controller')
 
 # Map button codes to letters
@@ -180,6 +185,7 @@ while True:
 			
 	if v == 'X':
 		sys.exit()
+		
 		
 	
 	
